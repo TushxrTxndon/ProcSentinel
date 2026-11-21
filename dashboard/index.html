@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProcSentinel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A7E8C'/%3E%3Cpath d='M4 17h6l3-8 5 15 3-7h7' fill='none' stroke='white' stroke-width='2.6' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 17h7l3-8 5 15 3-7h10"/></svg>
+    <div>
+      <h1>ProcSentinel</h1>
+      <p id="status" class="status">Connecting…</p>
+    </div>
+  </div>
+  <div class="vitals" id="vitals"></div>
+  <div class="top-actions">
+    <div class="overhead" id="overhead" title="CPU used by ProcSentinel itself"></div>
+    <button class="icon-btn" id="themeBtn" aria-label="Switch light or dark theme" title="Switch theme">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="banner" id="banner" hidden></div>
+
+<section class="layers" id="layers" aria-label="Detection layers"></section>
+
+<section class="strip">
+  <div class="panel cores">
+    <div class="panel-head">
+      <h2>CPU cores</h2>
+      <p class="note" id="coreNote">How busy each core was over the last second, from /proc/stat.</p>
+    </div>
+    <div class="core-grid" id="cores"></div>
+  </div>
+  <div class="panel impact" id="impact" aria-live="polite"></div>
+</section>
+
+<main class="grid">
+  <section class="panel procs" aria-labelledby="procsTitle">
+    <div class="panel-head">
+      <h2 id="procsTitle">Processes <span class="count" id="procCount"></span></h2>
+      <div class="tools">
+        <div class="seg" role="group" aria-label="Process view">
+          <button data-view="list" aria-pressed="true">List</button>
+          <button data-view="tree" aria-pressed="false" title="Parent and child processes, as created by fork()">Tree</button>
+        </div>
+        <input type="search" id="search" placeholder="Filter by name, PID or user" aria-label="Filter processes">
+        <div class="seg" role="group" aria-label="How CPU % is counted">
+          <button data-cpu="core" aria-pressed="true" title="Linux and top: 100% is one fully busy core">1 core = 100%</button>
+          <button data-cpu="total" aria-pressed="false" title="Windows Task Manager: 100% is every core fully busy">All cores = 100%</button>
+        </div>
+        <label class="check"><input type="checkbox" id="hideK" checked> Hide kernel threads</label>
+        <label class="check"><input type="checkbox" id="onlyFlagged"> Flagged only</label>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel detail" id="detail" aria-live="polite"></section>
+
+  <aside class="side">
+    <section class="panel alerts" aria-label="Alerts and actions">
+      <div class="panel-head">
+        <div class="seg" role="tablist">
+          <button role="tab" data-tab="alerts" aria-selected="true">Alerts <span class="count" id="alertCount"></span></button>
+          <button role="tab" data-tab="actions" aria-selected="false">Actions <span class="count" id="actionCount"></span></button>
+        </div>
+        <button class="link" id="clearAlerts">Clear log</button>
+      </div>
+      <ol class="alert-list" id="alerts"></ol>
+      <ol class="alert-list" id="actions" hidden></ol>
+    </section>
+    <section class="panel workloads" aria-labelledby="wlTitle">
+      <div class="panel-head">
+        <h2 id="wlTitle">Test workloads</h2>
+        <button class="link" id="stopAll">Stop all</button>
+      </div>
+      <p class="hint">Each one reproduces an anomaly from the test plan. They run as children of the engine and stop with it.</p>
+      <ul class="wl-list" id="workloads"></ul>
+    </section>
+  </aside>
+</main>
+
+<dialog id="alertDlg" class="drawer"></dialog>
+<dialog id="confirmDlg" class="confirm"></dialog>
+<div class="toasts" id="toasts" role="status"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
